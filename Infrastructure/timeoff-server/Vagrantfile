@@ -1,0 +1,13 @@
+Vagrant.configure("2") do |config|
+  config.vm.define "to-dev-server1" do |subconfig|
+    subconfig.vm.box = "centos/7"
+    subconfig.vm.network "private_network", ip: "192.168.100.2"
+    subconfig.vm.network :forwarded_port, guest: 22, host: 1002
+  end
+  config.vm.provision "ansible" do |ansible|
+    ansible.playbook = "provisioning/playbook.yml"
+    ansible.groups = {
+      "timeoff" => ["to-dev-server1"],
+    }
+  end
+end

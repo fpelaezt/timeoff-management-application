@@ -1,0 +1,18 @@
+- name: Setup default git configuraiton
+  git_config:
+    name="{{ item.name }}"
+    scope=global
+    value="{{ item.value }}"
+  with_items:
+    - {name: "user.name",  value: "Fernando Pelaez T" }
+    - {name: "user.email", value: "fernando.pelaez@cwc.com" }
+
+- name: Create /root/.ssh directory
+  file:
+    state: directory
+    path: /root/.ssh
+
+- name: Allow SSH Authentication
+  template: src={{ role_path }}/files/sshd_config dest=/etc/ssh/sshd_config owner=root mode=0644
+  notify:
+    - restart sshd

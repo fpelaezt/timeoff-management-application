@@ -1,0 +1,18 @@
+- name: Common packages | Install
+  yum: 
+    name:
+      - git
+      - libselinux-python
+      - mlocate
+      - gcc
+      - gcc-c++
+      - autoconf
+      - automake
+      - tree
+      - telnet
+      - yum-utils
+      - net-tools
+      - mod-ssl
+      - openssl
+    state: present
+  tags: packages
