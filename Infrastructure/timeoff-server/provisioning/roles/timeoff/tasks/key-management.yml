@@ -1,0 +1,26 @@
+- name: Allow SSH Authentication
+  template: src={{ role_path }}/files/sshd_config dest=/etc/ssh/sshd_config owner=root mode=0644
+
+- name: Create /root/.ssh directory
+  file:
+    state: directory
+    path: /root/.ssh
+
+- name: Copy SSH PUBLIC GITLAB Keys
+  template: src={{ role_path }}/files/id_rsa_gitlab dest=/home/vagrant/.ssh/id_rsa owner=vagrant group=vagrant mode=0600
+
+- name: Copy SSH PRIVATE GITLAB Keys
+  template: src={{ role_path }}/files/id_rsa_gitlab.pub dest=/home/vagrant/.ssh/id_rsa.pub owner=vagrant group=vagrant mode=0600
+
+- name: Insert GITLAB host into known_hosts file
+  lineinfile:
+    path: /home/vagrant/.ssh/known_hosts
+    owner: vagrant
+    group: vagrant
+    create: yes
+    state: present
+    line: "{{ git.known_host }}"
+
+- name: Restart SSH service
+  shell: systemctl restart sshd
+  ignore_errors: True

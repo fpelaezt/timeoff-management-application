@@ -1,3 +1,5 @@
+- include_tasks: tasks/key-management.yml
+
 - name: Setup default git configuraiton
   git_config:
     name="{{ item.name }}"
@@ -7,12 +9,32 @@
     - {name: "user.name",  value: "Fernando Pelaez T" }
     - {name: "user.email", value: "fernando.pelaez@cwc.com" }
 
-- name: Create /root/.ssh directory
-  file:
-    state: directory
-    path: /root/.ssh
+- name: Download NPM Package
+  shell: curl --silent --location https://rpm.nodesource.com/setup_8.x | sudo bash -
+  ignore_errors: True
 
-- name: Allow SSH Authentication
-  template: src={{ role_path }}/files/sshd_config dest=/etc/ssh/sshd_config owner=root mode=0644
-  notify:
-    - restart sshd
+- name: Install NPM Package
+  yum: 
+    name:
+      - nodejs
+    state: present
+
+- name: Clone remote from git
+  git:
+    repo="{{ git.repo }}"
+    dest="{{ timeoff.release_path }}"
+    accept_hostkey=yes
+    key_file={{ git.key_file }}
+    version={{ git.branch }}
+
+#- name: Install NPM Application
+#  command: chdir=/home/timeoff-management npm install
+#  ignore_errors: True
+
+#- name: Install NPM Application
+#  command: chdir=/home/timeoff-management npm fix audit
+#  ignore_errors: True
+
+#- name: Start NPM Application
+#  shell: cd /home/timeoff-management; ( ( nohup npm start </dev/null >/dev/null 2>&1 ) & )
+#  ignore_errors: True

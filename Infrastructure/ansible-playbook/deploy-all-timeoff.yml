@@ -1,0 +1,29 @@
+---
+- hosts: to-dev-server1
+  vars:
+    timeoff_release_path: /home/timeoff-management
+    timeoff_release_file: timeoff-management.tar
+    timeoff_tar_file: /tmp/deploy-timeoff/timeoff-management.tar
+
+  tasks:
+  - name: Ensure release directory exists
+    file:
+      path: '{{ timeoff_release_path }}'
+      state: directory
+
+  - name: Copy code files files to release path
+    copy:
+      src: '{{ item.src }}'
+      dest: '{{ item.dest }}'
+      owner: root
+      group: root
+      mode: 0600
+    ignore_errors: yes
+    with_items:
+      - { src: '{{ timeoff_tar_file }}', dest: '{{ timeoff_release_path }}/{{ timeoff_release_file }}' }
+
+  - name: Unzip Code file
+    unarchive:
+      src: '{{ timeoff_release_path }}/{{ timeoff_release_file }}'
+      dest: '{{ timeoff_release_path }}'
+      remote_src: yes

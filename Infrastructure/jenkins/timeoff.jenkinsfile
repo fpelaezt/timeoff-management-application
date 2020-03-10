@@ -1,0 +1,46 @@
+pipeline {
+    agent any
+    stages {
+        stage('Stage: Checkout Code from GIT') {
+            steps {
+                echo 'Cloning TIMEOFF Repository from GIT (develop branch)...'
+                checkout(
+                    [
+                        $class: 'GitSCM',
+                        branches: [[name: 'master']],
+                        doGenerateSubmoduleConfigurations: false,
+                        extensions: [],
+                        submoduleCfg: [],
+                        userRemoteConfigs: [
+                            [
+                                credentialsId: '',
+                                url: 'git@172.28.8.155:fernando.pelaez/timeoff-management-application.git'
+                            ]
+                        ]
+                    ]
+                )
+            }
+        }
+        stage('Stage: Deploy into Testing') {
+            steps {
+                echo 'Starting Ansible Ansible playbook....'
+                withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'ansible-master',
+                    usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
+                    script {
+                        def remote = [:]
+                        remote.name = 'ansible'
+                        remote.host = '172.26.132.31'
+                        remote.user = env.USERNAME
+                        remote.password = env.PASSWORD
+                        remote.port = 6002
+                        remote.allowAnyHosts = true
+                        remote.timeoutSec = 50
+                        stage('Run Ansible Playbook') {
+                            sshCommand remote: remote, command: "cd /home/ansible/timeoff-management-application/Infrastructure/ansible-playbook; git pull; sh deploy-all-timeoff.sh"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

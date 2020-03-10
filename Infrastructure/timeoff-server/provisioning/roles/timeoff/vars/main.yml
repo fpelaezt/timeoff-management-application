@@ -1,0 +1,9 @@
+git:
+  repo: git@172.28.8.155:fernando.pelaez/timeoff-management-application.git
+  branch: master
+  key_file: /home/vagrant/.ssh/id_rsa
+  known_host: "172.28.8.155 ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBFsc5OJ8tx7AJ2sV1Yo99GjUuBMCR
+/obvheIZ+crGYx/eV4WUit+VzpvD1JcsGWN8pVSqxJLLRq+SIUXc1JHVDk="
+
+timeoff:
+  release_path: /home/timeoff-management

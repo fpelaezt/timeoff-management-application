@@ -3,16 +3,10 @@
     name:
       - git
       - libselinux-python
-      - mlocate
-      - gcc
-      - gcc-c++
-      - autoconf
-      - automake
-      - tree
-      - telnet
       - yum-utils
-      - net-tools
-      - mod-ssl
       - openssl
+      - epel-release
+      - gcc-c++
+      - make
     state: present
   tags: packages
